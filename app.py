@@ -1,0 +1,71 @@
+import yfinance as yf
+import datetime as dt
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+ethical = ['AAPL', 'MSFT', 'ADBE']
+growth = ['AVGO', 'GPRO', 'NVDA']
+index = ['FB', 'AMZN', 'HMC']
+quality = ['JPM', 'WMT', 'BBY']
+value = ['TSLA', 'TWTR', 'GOOG']
+
+todays_date = dt.date.today()
+last_n_days = 7
+last_n_day = todays_date - dt.timedelta(days=last_n_days)
+
+def getStock(s1, s2):
+    stocks = []
+    if s1 == 'ethical' or s2 == 'ethical':
+        stocks += ethical
+    if s1 == 'growth' or s2 == 'growth':
+        stocks += growth
+    if s1 == 'index' or s2 == 'index':
+        stocks += index
+    if s1 == 'quality' or s2 == 'quality':
+        stocks += quality
+    if s1 == 'value' or s2 == 'value':
+        stocks += value
+    return stocks
+
+def getStockInfo(stocks):
+    stocksInfo = yf.download(" ".join(stocks), start=last_n_day, end=todays_date)
+    return stocksInfo
+
+def generateBarChart(stocks, stocksInfo):
+    stocks_list = []
+    for s in range(len(stocks)):
+        stock_list = []
+        for d in range(last_n_days - 2):
+            stock_list.append(stocksInfo.iloc[d][s+len(stocks)])
+        stocks_list.append(stock_list)
+    X = np.arange(len(stocks_list[0]))
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    color = ['b', 'g', 'r', 'c', 'm', 'y']
+    for i in range(len(stocks_list)):
+        ax.bar(X+0.1*i, stocks_list[i], color=color[i], width=0.1)
+    ax.legend(labels=stocks)
+    ax.set_xticks(X)
+    labels = ax.set_xticklabels([d.date() for d in list(stocksInfo.index)])
+    for i, label in enumerate(labels):
+        label.set_y(label.get_position()[1] - (i%2)*0.075)
+    plt.show()
+
+if __name__ == '__main__':
+    print("Please input the first strategy: ")
+    print("ethical, growth, index, quality, or value")
+    s1 = input()
+    print("Please input the second strategy: ")
+    print("Enter 'none' it unnecessarty")
+    s2 = input()
+    print("Please input the amount ($): ")
+    print("minimum is 5000")
+    amount = input()
+
+    stocks = getStock(s1, s2)
+    stocksInfo = getStockInfo(stocks)
+    generateBarChart(stocks, stocksInfo)
+
+
+
