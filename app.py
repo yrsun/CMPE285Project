@@ -32,13 +32,17 @@ def getStockInfo(stocks):
     stocksInfo = yf.download(" ".join(stocks), start=last_n_day, end=todays_date)
     return stocksInfo
 
-def generateBarChart(stocks, stocksInfo):
+def getStockClose(stocksInfo):
     stocks_list = []
     for s in range(len(stocks)):
         stock_list = []
         for d in range(last_n_days - 2):
             stock_list.append(stocksInfo.iloc[d][s+len(stocks)])
         stocks_list.append(stock_list)
+    return stocks_list
+
+def generateBarChart(stocks, stocksInfo):
+    stocks_list = getStockClose(stocksInfo)
     X = np.arange(len(stocks_list[0]))
     fig = plt.figure()
     ax = fig.add_subplot()
@@ -48,6 +52,27 @@ def generateBarChart(stocks, stocksInfo):
         ax.bar(X+dis*i, stocks_list[i], color=color[i], width=dis)
     ax.legend(labels=stocks)
     ax.set_xticks(X)
+    labels = ax.set_xticklabels([d.date() for d in list(stocksInfo.index)])
+    for i, label in enumerate(labels):
+        label.set_y(label.get_position()[1] - (i%2)*0.075)
+    plt.show()
+
+def generateProfitChart(amount, stocks, stocksInfo):
+    stocks_list = getStockClose(stocksInfo)
+    profits = []
+    noOfShares = []
+    amountPerStock = float(amount) / float(len(stocks))
+    for s in range(len(stocks_list)):
+        noOfShares.append(float(amountPerStock) / float(stocks_list[s][0]))
+    for d in range(len(stocks_list[0])):
+        profit = 0
+        for s in range(len(stocks_list)):
+            profit += noOfShares[s] * stocks_list[s][d]
+        profits.append(profit)
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    ax.plot(profits, 'o-')
+    ax.set_xticks(np.arange(len(stocks_list[0])))
     labels = ax.set_xticklabels([d.date() for d in list(stocksInfo.index)])
     for i, label in enumerate(labels):
         label.set_y(label.get_position()[1] - (i%2)*0.075)
@@ -68,3 +93,4 @@ if __name__ == '__main__':
     stocksInfo = getStockInfo(stocks)
     generateBarChart(stocks, stocksInfo)
 
+    generateProfitChart(amount, stocks, stocksInfo)
