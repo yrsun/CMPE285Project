@@ -43,8 +43,9 @@ def generateBarChart(stocks, stocksInfo):
     fig = plt.figure()
     ax = fig.add_subplot()
     color = ['b', 'g', 'r', 'c', 'm', 'y']
+    dis = 0.1 if len(stocks_list) > 3 else 0.2
     for i in range(len(stocks_list)):
-        ax.bar(X+0.1*i, stocks_list[i], color=color[i], width=0.1)
+        ax.bar(X+dis*i, stocks_list[i], color=color[i], width=dis)
     ax.legend(labels=stocks)
     ax.set_xticks(X)
     labels = ax.set_xticklabels([d.date() for d in list(stocksInfo.index)])
@@ -66,6 +67,4 @@ if __name__ == '__main__':
     stocks = getStock(s1, s2)
     stocksInfo = getStockInfo(stocks)
     generateBarChart(stocks, stocksInfo)
-
-
 
