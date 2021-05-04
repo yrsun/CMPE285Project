@@ -2,7 +2,7 @@
 
 TEST CASE:
 1. Enter an investment value that is less than 5000 should display an error page
-2. Enter an investment value with charactors other than 0~9, should display an error page
+2. Enter an investment value with characters other than 0~9, should display an error page
 3. Did not enter an investment value from home page should display an error page
 4. Did not select any strategy from home page should display an error page
 5. Select 'ethical' strategy and enter 5000, click submit, display stock portfolio 
