@@ -11,7 +11,7 @@ Bootstrap(app)
 def home():
     return render_template("home.html")
 
-@app.route('/stockportfolio', methods = ['POST'])
+@app.route('/stockportfolio', methods = ['POST', "GET"])
 def generatePortfolio():
     s1 = request.form['strategy1']
     s2 = request.form['strategy2']
