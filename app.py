@@ -16,10 +16,13 @@ def generatePortfolio():
     s1 = request.form['strategy1']
     s2 = request.form['strategy2']
     value = request.form['value']
+    if not value and s1 == 'None' and s2 == 'None':
+        error_messae = "No Inputs Detected"
+        return render_template('error.html', error_message = error_messae)
     if not value or not value.isdecimal() or int(value) < 5000:
         error_messae = "Invalid Investment Value. Minimum Value is 5000$"
         return render_template('error.html', error_message = error_messae)
-    if not s1 and not s2:
+    if s1 == 'None' and s2 == 'None':
         error_messae = "No Strategy Selected"
         return render_template('error.html', error_message = error_messae)
     if s1 == s2:
