@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 ethical = ['AAPL', 'MSFT', 'ADBE']
 growth = ['AVGO', 'GPRO', 'NVDA']
 index = ['FB', 'AMZN', 'HMC']
@@ -32,7 +33,7 @@ def getStockInfo(stocks):
     stocksInfo = yf.download(" ".join(stocks), start=last_n_day, end=todays_date)
     return stocksInfo
 
-def getStockClose(stocksInfo):
+def getStockClose(stocks, stocksInfo):
     stocks_list = []
     for s in range(len(stocks)):
         stock_list = []
@@ -42,7 +43,7 @@ def getStockClose(stocksInfo):
     return stocks_list
 
 def generateBarChart(stocks, stocksInfo):
-    stocks_list = getStockClose(stocksInfo)
+    stocks_list = getStockClose(stocks, stocksInfo)
     X = np.arange(len(stocks_list[0]))
     fig = plt.figure()
     ax = fig.add_subplot()
@@ -58,7 +59,7 @@ def generateBarChart(stocks, stocksInfo):
     plt.show()
 
 def generateProfitChart(amount, stocks, stocksInfo):
-    stocks_list = getStockClose(stocksInfo)
+    stocks_list = getStockClose(stocks, stocksInfo)
     profits = []
     noOfShares = []
     amountPerStock = float(amount) / float(len(stocks))
@@ -78,6 +79,23 @@ def generateProfitChart(amount, stocks, stocksInfo):
         label.set_y(label.get_position()[1] - (i%2)*0.075)
     plt.show()
 
+def generateStocksInfo(stocks, stocksInfo, amount):
+    stocksTable = []
+    for s in stocks:
+        entry = {}
+        stock = yf.Ticker(s)
+        entry['symbol'] = s
+        entry['shortN'] = stock.info['shortName']
+        entry['regularMP'] = stock.info['regularMarketPrice']
+        entry['marketPC'] = stock.info['regularMarketPrice'] - stock.info['previousClose']
+        entry['marketPCP'] = entry['marketPC'] / stock.info['previousClose'] * 100
+        current = dt.datetime.now()
+        entry['time'] = current.strftime("%a %b %d %H:%M:%S PDT %Y")
+        entry['costs'] = float(amount) / len(stocks)
+        entry['shares'] = entry['costs'] / entry['regularMP']
+        stocksTable.append(entry)
+    print(stocksTable)
+
 if __name__ == '__main__':
     print("Please input the first strategy: ")
     print("ethical, growth, index, quality, or value")
@@ -91,6 +109,8 @@ if __name__ == '__main__':
 
     stocks = getStock(s1, s2)
     stocksInfo = getStockInfo(stocks)
+    generateStocksInfo(stocks, stocksInfo, amount)
+
     generateBarChart(stocks, stocksInfo)
 
     generateProfitChart(amount, stocks, stocksInfo)
