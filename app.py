@@ -100,7 +100,7 @@ def generateProfitChart(value, stocks, stocksInfo):
 
 def generateStocksInfo(stocks, stocksInfo, value):
     rst = ""
-    rst += "<table>"
+    rst += "<table id = 'table2'>"
     rst += "<tr><th>Symbol</th><th>Short Name</th><th>Last Price</th><th>Change</th><th>Time</th><th>Shares</th><th>Cost</th></tr>"
     for s in stocks:
         entry = {}
@@ -108,17 +108,22 @@ def generateStocksInfo(stocks, stocksInfo, value):
         entry['symbol'] = s
         entry['shortN'] = stock.info['shortName']
         entry['regularMP'] = stock.info['regularMarketPrice']
-        entry['marketPC'] = stock.info['regularMarketPrice'] - stock.info['previousClose']
-        entry['marketPCP'] = entry['marketPC'] / stock.info['previousClose'] * 100
+        change = round(stock.info['regularMarketPrice'] - stock.info['previousClose'], 2)
+        if change > 0:
+            entry['marketPC'] = '+' + str(change)
+            entry['marketPCP'] = '+' + str(round(change / stock.info['previousClose'] * 100, 2))
+        else: 
+            entry['marketPC'] = str(change)
+            entry['marketPCP'] = round(change / stock.info['previousClose'] * 100, 2)
         current = dt.datetime.now()
         entry['time'] = current.strftime("%a %b %d %H:%M:%S PDT %Y")
         entry['costs'] = float(value) / len(stocks)
         entry['shares'] = entry['costs'] / entry['regularMP']
-        rst += f"<tr><td>{entry['symbol']}</td><td>{entry['shortN']}</td><td>{entry['regularMP']:.02f}</td><td>{entry['marketPC']:.02f} {entry['marketPCP']:.02f}%</td><td>{entry['time']}</td><td>{entry['shares']:.02f}</td><td>${entry['costs']:.02f}</td></tr>"
+        rst += f"<tr><td>{entry['symbol']}</td><td>{entry['shortN']}</td><td>{entry['regularMP']:.02f}</td><td>{entry['marketPC']} {entry['marketPCP']}%</td><td>{entry['time']}</td><td>{entry['shares']:.02f}</td><td>${entry['costs']:.02f}</td></tr>"
     rst += "</table>"
     return rst
 
-@app.route('/')
+@app.route('/', methods = ["GET", "POST"])
 def home():
     return render_template("home.html")
 
