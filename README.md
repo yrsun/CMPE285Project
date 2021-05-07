@@ -15,9 +15,9 @@ TEST CASE:
 
 ## 项目实现：
 ### 1. 使用流程：
-输入金额 
-选择Investing strategy 
-显示结果
+输入金额<br> 
+选择Investing strategy<br> 
+显示结果<br> 
 
 ## 项目方式：
 1. strategy内的股票是自定义还是手动指定? 
@@ -34,30 +34,30 @@ TEST CASE:
 
 ## 项目文件结构
 ### py文件定义
-app.py：
+app.py：<br> 
 function.py:
 
 ### 函数定义
-getStock(s1, s2)
+getStock(s1, s2)<br> 
 注释说明（函数说明加参数说明）：
 
 
-getStockInfo(stock)
+getStockInfo(stock)<br> 
 注释说明：
 
-getStockClose(stocks, stocksInfo)
+getStockClose(stocks, stocksInfo)<br> 
 注释说明：
 
-generateBarChart(stocks, stocksInfo)
+generateBarChart(stocks, stocksInfo)<br> 
 注释说明：
 
-generateProfitChart(value, stocks, stocksInfo)
+generateProfitChart(value, stocks, stocksInfo)<br> 
 注释说明：
 
-generateStocksInfo(stocks, stocksInfo, value)
+generateStocksInfo(stocks, stocksInfo, value)<br> 
 注释说明：
 
-generatePortfolio()
+generatePortfolio()<br> 
 注释说明：
 
 ## Flask实现方式：
