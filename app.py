@@ -73,14 +73,23 @@ def generateBarChart(stocks, stocksInfo):
     img.seek(0)
     return base64.b64encode(img.getvalue()).decode()
 
-def generateProfitChart(value, stocks, stocksInfo):
+def generateProfitChart(value, stocks, stocksInfo, divideOption):
     img = io.BytesIO()
     stocks_list = getStockClose(stocks, stocksInfo)
     profits = []
     noOfShares = []
-    valuePerStock = float(value) / float(len(stocks))
+    valuePerStock = []
+    if divideOption == 'Aggressively':
+        for i in range(int(len(stocks) / 3)):
+            valuePerStock.append(float(value) * 0.5 / (len(stocks) / 3))
+            valuePerStock.append(float(value) * 0.3 / (len(stocks) / 3))
+            valuePerStock.append(float(value) * 0.2 / (len(stocks) / 3))
+    else: 
+        valuePerStock = [float(value) / float(len(stocks)) for i in range(len(stocks))]
+    idx = 0
     for s in range(len(stocks_list)):
-        noOfShares.append(float(valuePerStock) / float(stocks_list[s][0]))
+        noOfShares.append(float(valuePerStock[idx]) / float(stocks_list[s][0]))
+        idx += 1
     for d in range(len(stocks_list[0])):
         profit = 0
         for s in range(len(stocks_list)):
@@ -98,10 +107,19 @@ def generateProfitChart(value, stocks, stocksInfo):
     img.seek(0)
     return base64.b64encode(img.getvalue()).decode()
 
-def generateStocksInfo(stocks, stocksInfo, value):
+def generateStocksInfo(stocks, stocksInfo, value, divideOption):
     rst = ""
     rst += "<table id = 'table2'>"
     rst += "<tr><th>Symbol</th><th>Short Name</th><th>Last Price</th><th>Change</th><th>Time</th><th>Shares</th><th>Cost</th></tr>"
+    idx = 0
+    valuePerStock = []
+    if divideOption == 'Aggressively':
+        for i in range(int(len(stocks) / 3)):
+            valuePerStock.append(float(value) * 0.5 / (len(stocks) / 3))
+            valuePerStock.append(float(value) * 0.3 / (len(stocks) / 3))
+            valuePerStock.append(float(value) * 0.2 / (len(stocks) / 3))
+    else: 
+        valuePerStock = [float(value) / float(len(stocks)) for i in range(len(stocks))]
     for s in stocks:
         entry = {}
         stock = yf.Ticker(s)
@@ -117,9 +135,11 @@ def generateStocksInfo(stocks, stocksInfo, value):
             entry['marketPCP'] = round(change / stock.info['previousClose'] * 100, 2)
         current = dt.datetime.now()
         entry['time'] = current.strftime("%a %b %d %H:%M:%S PDT %Y")
-        entry['costs'] = float(value) / len(stocks)
+        entry['costs'] = valuePerStock[idx]
+        # entry['costs'] = float(value) / len(stocks)
         entry['shares'] = entry['costs'] / entry['regularMP']
         rst += f"<tr><td>{entry['symbol']}</td><td>{entry['shortN']}</td><td>{entry['regularMP']:.02f}</td><td>{entry['marketPC']} {entry['marketPCP']}%</td><td>{entry['time']}</td><td>{entry['shares']:.02f}</td><td>${entry['costs']:.02f}</td></tr>"
+        idx += 1
     rst += "</table>"
     return rst
 
@@ -131,6 +151,7 @@ def home():
 def generatePortfolio():
     s1 = request.form['strategy1']
     s2 = request.form['strategy2']
+    divideOption = request.form['divideOption']
     value = request.form['value']
     if not value and s1 == 'None' and s2 == 'None':
         error_messae = "No Inputs Detected"
@@ -147,10 +168,10 @@ def generatePortfolio():
 
     stocks = getStock(s1, s2)
     stocksInfo = getStockInfo(stocks)
-    stocksTable = generateStocksInfo(stocks, stocksInfo, value)
+    stocksTable = generateStocksInfo(stocks, stocksInfo, value, divideOption)
 
     plot_url1 = generateBarChart(stocks, stocksInfo)
 
-    plot_url2 = generateProfitChart(value, stocks, stocksInfo)
+    plot_url2 = generateProfitChart(value, stocks, stocksInfo, divideOption)
     
     return render_template('stockportfolio.html', strategy1 = s1, strategy2 = s2, value = value, stocksTable = stocksTable, imagen1={'imagen1':plot_url1}, imagen2={'imagen2':plot_url2}) 
