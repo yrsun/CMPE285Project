@@ -176,3 +176,8 @@ def generatePortfolio():
     plot_url2 = generateProfitChart(value, stocks, stocksInfo, divideOption)
     
     return render_template('stockportfolio.html', strategy1 = s1, strategy2 = s2, value = value, stocksTable = stocksTable, imagen1={'imagen1':plot_url1}, imagen2={'imagen2':plot_url2}) 
+
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
