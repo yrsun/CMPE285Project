@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_bootstrap import Bootstrap
 import yfinance as yf
 import os
@@ -15,6 +15,7 @@ import numpy as np
 
 app = Flask(__name__)
 Bootstrap(app)
+app.secret_key = '123456'
 
 ethical = ['AAPL', 'MSFT', 'ADBE']
 growth = ['AVGO', 'GPRO', 'NVDA']
@@ -154,18 +155,27 @@ def generatePortfolio():
     s2 = request.form['strategy2']
     divideOption = request.form['divideOption']
     value = request.form['value']
+    
     if not value and s1 == 'None' and s2 == 'None':
         error_messae = "No Inputs Detected"
-        return render_template('error.html', error_message = error_messae)
+        flash(error_messae)
+        return redirect(url_for('home'))
+
+    
     if not value or not value.isdecimal() or int(value) < 5000:
         error_messae = "Invalid Investment Value. Minimum Value is 5000$"
-        return render_template('error.html', error_message = error_messae)
+        flash(error_messae)
+        return redirect(url_for('home'))
+    
     if s1 == 'None' and s2 == 'None':
         error_messae = "No Strategy Selected"
-        return render_template('error.html', error_message = error_messae)
+        flash(error_messae)
+        return redirect(url_for('home'))
+    
     if s1 == s2:
         error_messae = "Invalid Inputs. Two Strategies Are Same"
-        return render_template('error.html', error_message = error_messae)
+        flash(error_messae)
+        return redirect(url_for('home'))
 
     stocks = getStock(s1, s2)
     stocksInfo = getStockInfo(stocks)
