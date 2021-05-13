@@ -38,6 +38,7 @@ def getStock(s1, s2):
         stocks += quality
     if s1 == 'Value Investing' or s2 == 'Value Investing':
         stocks += value
+    stocks.sort()
     return stocks
 
 def getStockInfo(stocks):
