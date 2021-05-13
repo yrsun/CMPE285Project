@@ -89,7 +89,7 @@
             width: 25%;
             background-color: #4CAF50;
             color: white;
-            padding: 14px 20px;
+            padding: 12px 20px;
             margin: 8px 0;
             border: none;
             border-radius: 4px;
@@ -111,9 +111,9 @@
             </header>
         </div>
 
-        <h2>Strategy1</h2>
+        <h2 align="center">Strategy1</h2>
         <form action="/stockportfolio" method="POST">
-        <div class="custom-select" style="width:200px;">
+        <div class="custom-select" style="width:200px; margin: 0 auto;">
             <select name="strategy1">
               <option value="None">Select Strategy:</option>
               <option value="Ethical Investing">Ethical Investing</option>
@@ -124,8 +124,8 @@
             </select>
         </div>
 
-        <h2>Strategy2 (optional)</h2>
-        <div class="custom-select" style="width:200px;">
+        <h2 align="center">Strategy2 (optional)</h2>
+        <div class="custom-select" style="width:200px; margin: 0 auto;">
             <select name="strategy2">
               <option value="None">Select Strategy:</option>
               <option value="Ethical Investing">Ethical Investing</option>
@@ -136,20 +136,27 @@
             </select>
         </div>
 
-        <h2>Divide option</h2>
-        <div class="custom-select" style="width:200px;">
+        <h2 align="center">Divide option</h2>
+        <div class="custom-select" style="width:200px; margin: 0 auto;">
             <select name="divideOption">
               <option value="Equally">Equally</option>
               <option value="Aggressively">Agressively</option>
             </select>
         </div>
 
-        <div class="custom-select" style="width:1000px;">
-            <h2>Investment value: </h2>
-            <input type="text" name="value" placeholder=" Enter Value Here ...">
+        <div class="custom-select" style="width:1000px; margin: 0 auto;">
+            <h2 align="center">Investment value: </h2>
+            <h2 align="center"><input type="text" name="value" placeholder=" Enter Value Here ..."></h2>
         </div>
 
-        <input type="submit" value="Submit">
+        <h2 align="center"><input type="submit" value="Submit"></h2>
+
+        <h2 align="center">
+        {% if get_flashed_messages() %}
+            {{ get_flashed_messages()[0] }}
+        {% endif %}
+        </h2>
+
         </form>
 
         <script>
