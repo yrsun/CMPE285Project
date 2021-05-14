@@ -4,7 +4,6 @@ import yfinance as yf
 import os
 import io
 import datetime as dt
-import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -22,9 +21,7 @@ index = ['FB', 'AMZN', 'HMC']
 quality = ['JPM', 'WMT', 'BBY']
 value = ['TSLA', 'TWTR', 'GOOG']
 
-todays_date = dt.date.today()
-last_n_days = 7
-last_n_day = todays_date - dt.timedelta(days=last_n_days)
+
 
 def getStock(s1, s2):
     stocks = []
@@ -42,6 +39,8 @@ def getStock(s1, s2):
     return stocks
 
 def getStockInfo(stocks):
+    todays_date = dt.date.today()
+    last_n_day = todays_date - dt.timedelta(days=7)
     stocksInfo = yf.download(" ".join(stocks), start=last_n_day, end=todays_date)
     return stocksInfo
 
@@ -49,7 +48,7 @@ def getStockClose(stocks, stocksInfo):
     stocks_list = []
     for s in range(len(stocks)):
         stock_list = []
-        for d in range(last_n_days - 2):
+        for d in range(5):
             stock_list.append(stocksInfo.iloc[d][s+len(stocks)])
         stocks_list.append(stock_list)
     return stocks_list
@@ -74,19 +73,29 @@ def generateBarChart(stocks, stocksInfo):
     img.seek(0)
     return base64.b64encode(img.getvalue()).decode()
 
+
+def aggressively(value, stocks, divideOption):
+    value_Stock = []
+    if divideOption == 'Aggressively':
+        for i in range(int(len(stocks) / 3)):
+            result5 = float(value) * 0.5 / (len(stocks) / 3)
+            result3 = float(value) * 0.3 / (len(stocks) / 3)
+            result2 = float(value) * 0.2 / (len(stocks) / 3)
+            value_Stock.extend([result5, result3, result2])
+    else:
+        value_Stock = [float(value) / float(len(stocks)) for i in range(len(stocks))]
+    return value_Stock
+
+
 def generateProfitChart(value, stocks, stocksInfo, divideOption):
     img = io.BytesIO()
     stocks_list = getStockClose(stocks, stocksInfo)
     profits = []
     noOfShares = []
     valuePerStock = []
-    if divideOption == 'Aggressively':
-        for i in range(int(len(stocks) / 3)):
-            valuePerStock.append(float(value) * 0.5 / (len(stocks) / 3))
-            valuePerStock.append(float(value) * 0.3 / (len(stocks) / 3))
-            valuePerStock.append(float(value) * 0.2 / (len(stocks) / 3))
-    else: 
-        valuePerStock = [float(value) / float(len(stocks)) for i in range(len(stocks))]
+    
+    valuePerStock = aggressively(value, stocks, divideOption)
+    
     idx = 0
     for s in range(len(stocks_list)):
         noOfShares.append(float(valuePerStock[idx]) / float(stocks_list[s][0]))
@@ -113,14 +122,9 @@ def generateStocksInfo(stocks, stocksInfo, value, divideOption):
     rst += "<table id = 'table2'>"
     rst += "<tr><th>Symbol</th><th>Short Name</th><th>Last Price</th><th>Change</th><th>Time</th><th>Shares</th><th>Cost</th></tr>"
     idx = 0
-    valuePerStock = []
-    if divideOption == 'Aggressively':
-        for i in range(int(len(stocks) / 3)):
-            valuePerStock.append(float(value) * 0.5 / (len(stocks) / 3))
-            valuePerStock.append(float(value) * 0.3 / (len(stocks) / 3))
-            valuePerStock.append(float(value) * 0.2 / (len(stocks) / 3))
-    else: 
-        valuePerStock = [float(value) / float(len(stocks)) for i in range(len(stocks))]
+    
+    valuePerStock = aggressively(value, stocks, divideOption)
+    
     for s in stocks:
         entry = {}
         stock = yf.Ticker(s)
