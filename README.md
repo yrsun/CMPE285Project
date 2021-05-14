@@ -11,4 +11,3 @@ TEST CASE:
 8. Select 'index' and 'index' strategies and enter 5000, click submit, should display an error page ✓
 9. Select 'value' strategy and enter 5000, and change the divide option to 'Aggressively', click submit, display stock portfolio ✓
 10. Select 'index' and 'quality' strategies and enter 1,500,000, and change the divide option to 'Aggressively', click submit, display stock portfolio ✓
-
